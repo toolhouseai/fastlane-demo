@@ -4,6 +4,11 @@
 
 **Fastlane Worker** is a system that enables AI agents to access public web content in a transparent and economically fair way. It provides a mechanism for websites to verify, meter, and monetize access by non-human agents, ensuring fairness and compliance while allowing AI agents to operate efficiently.
 
+----
+#### ⬇️ Click image for video 🎥
+
+ [![YouTube](https://i.ytimg.com/vi/8WbO_RZ4_fo/hqdefault.jpg)](https://www.youtube.com/watch?v=8WbO_RZ4_fo)
+
 ## Architecture
 
 ```mermaid
