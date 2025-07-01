@@ -14,27 +14,43 @@ export const indexHtml = `<!DOCTYPE html>
         <li><a href="/agents.html">Example content</a></li>
       </ul>
     </nav>
-    <h2>Agents List</h2>
+    <h2>Agents and Publishers List</h2>
     <div id="agents-table-container">Loading agents...</div>
     <script>
-      async function loadAgents() {
+      async function loadAgentsAndPublishers() {
         const container = document.getElementById("agents-table-container");
         try {
-          const resp = await fetch("/api/agents");
-          if (!resp.ok) throw new Error("Failed to fetch agents");
-          const agents = await resp.json();
-          if (!Array.isArray(agents) || agents.length === 0) {
-            container.textContent = "No agents found.";
+          // Fetch both endpoints in parallel
+          const [agentsResp, publishersResp] = await Promise.all([
+            fetch("/api/agents"),
+            fetch("/api/publishers")
+          ]);
+          if (!agentsResp.ok) throw new Error("Failed to fetch agents");
+          if (!publishersResp.ok) throw new Error("Failed to fetch publishers");
+          const agents = await agentsResp.json();
+          const publishers = await publishersResp.json();
+          // Combine arrays
+          const combined = [];
+          if (Array.isArray(agents)) combined.push(...agents);
+          if (Array.isArray(publishers)) combined.push(...publishers);
+          if (combined.length === 0) {
+            container.textContent = "No agents or publishers found.";
             return;
           }
           // Create table
           const table = document.createElement("table");
           table.style.borderCollapse = "collapse";
           table.style.width = "100%";
-          // Table header
+          // Table header (union of all keys)
+          const allKeys = Array.from(
+            combined.reduce((set, obj) => {
+              Object.keys(obj).forEach((k) => set.add(k));
+              return set;
+            }, new Set())
+          );
           const thead = document.createElement("thead");
           const headerRow = document.createElement("tr");
-          Object.keys(agents[0]).forEach((key) => {
+          allKeys.forEach((key) => {
             const th = document.createElement("th");
             th.textContent = key;
             th.style.border = "1px solid #ccc";
@@ -46,11 +62,11 @@ export const indexHtml = `<!DOCTYPE html>
           table.appendChild(thead);
           // Table body
           const tbody = document.createElement("tbody");
-          agents.forEach((agent) => {
+          combined.forEach((item) => {
             const row = document.createElement("tr");
-            Object.values(agent).forEach((val) => {
+            allKeys.forEach((key) => {
               const td = document.createElement("td");
-              td.textContent = val;
+              td.textContent = item[key] !== undefined ? item[key] : "";
               td.style.border = "1px solid #ccc";
               td.style.padding = "8px";
               row.appendChild(td);
@@ -61,10 +77,10 @@ export const indexHtml = `<!DOCTYPE html>
           container.innerHTML = "";
           container.appendChild(table);
         } catch (e) {
-          container.textContent = "Error loading agents: " + e.message;
+          container.textContent = "Error loading agents or publishers: " + e.message;
         }
       }
-      loadAgents();
+      loadAgentsAndPublishers();
     </script>
     <style>
       body {
