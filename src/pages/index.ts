@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+// This file exports the HTML content of the original public/index.html as a string
+export const indexHtml = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -10,8 +11,7 @@
     <p>This site explores the world of AI Agents and Content Publishers.</p>
     <nav>
       <ul>
-        <li><a href="/agents.html">AI Agents</a></li>
-        <li><a href="/publishers.html">Content Publishers</a></li>
+        <li><a href="/agents.html">Example content</a></li>
       </ul>
     </nav>
     <h2>Agents List</h2>
@@ -108,3 +108,4 @@
     </style>
   </body>
 </html>
+`;
